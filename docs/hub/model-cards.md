@@ -98,10 +98,10 @@ tags:
 - flair
 ```
 
-If it's not specified, the Hub will try to automatically detect the library type. Unless your model is from `transformers`, this approach is discouraged and repo creators should use the explicit `library_name` as much as possible. 
+If it's not specified, the Hub will try to automatically detect the library type. However, this approach is discouraged, and repo creators should use the explicit `library_name` as much as possible. 
 
-1. By looking into the presence of files such as `*.nemo` or `*saved_model.pb*`, the Hub can determine if a model is from NeMo or Keras. 
-2. If nothing is detected and there is a `config.json` file, it's assumed the library is `transformers`.
+1. By looking into the presence of files such as `*.nemo` or `*.mlmodel`, the Hub can determine if a model is from NeMo or CoreML.
+2. In the past, if nothing was detected and there was a `config.json` file, it was assumed the library was `transformers`. For model repos created after August 2024, this is not the case anymore – so you need to `library_name: transformers` explicitly.
 
 ### Specifying a base model
 
@@ -156,6 +156,25 @@ base_model:
 - l3utterfly/mistral-7b-v0.1-layla-v4
 ```
 
+The Hub will infer the type of relationship from the current model to the base model (`"adapter", "merge", "quantized", "finetune"`) but you can also set it explicitly if needed: `base_model_relation: quantized` for instance.
+
+### Specifying a new version
+
+If a new version of your model is available in the Hub, you can specify it in a `new_version` field.  
+
+For example, on `l3utterfly/mistral-7b-v0.1-layla-v3`:
+
+```yaml
+new_version: l3utterfly/mistral-7b-v0.1-layla-v4
+```
+
+This metadata will be used to display a link to the latest version of a model on the model page. If the model linked in `new_version` also has a `new_version` field, the very latest version will always be displayed. 
+
+<div class="flex justify-center">
+   <img class="block dark:hidden" src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/hub/new_version.png"/>
+   <img class="hidden dark:block" src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/hub/new_version-dark.png"/>
+</div>
+
 ### Specifying a dataset
 
 You can specify the datasets used to train your model in the model card metadata section. The datasets will be displayed on the model page and users will be able to filter models by dataset. You should use the Hub dataset identifier, which is the same as the dataset's repo name as the identifier:
@@ -168,7 +187,7 @@ datasets:
 
 ### Specifying a task (`pipeline_tag`)
 
-You can specify the `pipeline_tag` in the model card metadata. The `pipeline_tag` indicates the type of task the model is intended for. This tag will be displayed on the model page and users can filter models on the Hub by task. This tag is also used to determine which [widget](./models-widgets.md#enabling-a-widget) to use for the model and which APIs to use under the hood.
+You can specify the `pipeline_tag` in the model card metadata. The `pipeline_tag` indicates the type of task the model is intended for. This tag will be displayed on the model page and users can filter models on the Hub by task. This tag is also used to determine which [widget](./models-widgets#enabling-a-widget) to use for the model and which APIs to use under the hood.
 
 For `transformers` models, the pipeline tag is automatically inferred from the model's `config.json` file but you can override it in the model card metadata if required. Editing this field in the metadata UI will ensure that the pipeline tag is valid. Some other libraries with Hub integration will also automatically add the pipeline tag to the model card metadata.
 
@@ -250,7 +269,7 @@ Details on how to fill out a human-readable model card without Hub-specific meta
 
 ### How are model tags determined?
 
-Each model page lists all the model's tags in the page header, below the model name. These are primarily computed from the model card metadata, although some are added automatically, as described in [Creating a Widget](./models-widgets#creating-a-widget).
+Each model page lists all the model's tags in the page header, below the model name. These are primarily computed from the model card metadata, although some are added automatically, as described in [Enabling a Widget](./models-widgets#enabling-a-widget).
 
 ### Can I add custom tags to my model?
 
